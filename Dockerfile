@@ -12,12 +12,10 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Build args become env vars at build time
-ARG GOOGLE_CLOUD_PROJECT
-ARG GOOGLE_CLOUD_LOCATION=us-central1
-
+# Set via --set-build-env-vars in gcloud run deploy
+# These are available as env vars during the build
 ENV GOOGLE_CLOUD_PROJECT=${GOOGLE_CLOUD_PROJECT}
-ENV GOOGLE_CLOUD_LOCATION=${GOOGLE_CLOUD_LOCATION}
+ENV GOOGLE_CLOUD_LOCATION=${GOOGLE_CLOUD_LOCATION:-us-central1}
 ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN npm run build

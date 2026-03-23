@@ -90,8 +90,7 @@ gcloud run deploy "${SERVICE_NAME}" \
   --max-instances="${MAX_INSTANCES}" \
   --min-instances="${MIN_INSTANCES}" \
   --set-env-vars="GOOGLE_CLOUD_PROJECT=${PROJECT},GOOGLE_CLOUD_LOCATION=${REGION}" \
-  --build-arg="GOOGLE_CLOUD_PROJECT=${PROJECT}" \
-  --build-arg="GOOGLE_CLOUD_LOCATION=${REGION}" \
+  --set-build-env-vars="GOOGLE_CLOUD_PROJECT=${PROJECT},GOOGLE_CLOUD_LOCATION=${REGION}" \
   --port=3000 \
   --quiet
 
