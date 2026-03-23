@@ -14,6 +14,7 @@ export async function POST(request: NextRequest) {
       includeThoughts,
       enableSearchGrounding,
       enableImageSearch,
+      imageOnly,
     } = body as {
       prompt: string
       model: ModelId
@@ -23,6 +24,7 @@ export async function POST(request: NextRequest) {
       includeThoughts?: boolean
       enableSearchGrounding?: boolean
       enableImageSearch?: boolean
+      imageOnly?: boolean
     }
 
     if (!prompt || !model) {
@@ -39,6 +41,7 @@ export async function POST(request: NextRequest) {
       includeThoughts,
       enableSearchGrounding,
       enableImageSearch,
+      imageOnly,
     })
 
     return NextResponse.json(result)

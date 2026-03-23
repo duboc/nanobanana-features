@@ -20,9 +20,16 @@ export function useChatSession(): UseChatSessionReturn {
     setIsLoading(true)
     setError(null)
 
+    // Build user message parts including any attached image
+    const userParts: ChatMessage['parts'] = [{ text }]
+    const attachedImage = body.image as ImageData | undefined
+    if (attachedImage) {
+      userParts.push({ imageData: attachedImage })
+    }
+
     const userMessage: ChatMessage = {
       role: 'user',
-      parts: [{ text }],
+      parts: userParts,
     }
 
     const updatedMessages = [...messages, userMessage]
@@ -60,7 +67,6 @@ export function useChatSession(): UseChatSessionReturn {
       setMessages(prev => [...prev, assistantMessage])
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unexpected error occurred')
-      // Remove the user message on error
       setMessages(messages)
     } finally {
       setIsLoading(false)

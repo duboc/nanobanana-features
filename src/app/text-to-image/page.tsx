@@ -6,13 +6,15 @@ import { PromptInput } from '@/components/generation/prompt-input'
 import { GenerationConfig } from '@/components/generation/generation-config'
 import { ImageGallery } from '@/components/image/image-gallery'
 import { useImageGeneration } from '@/hooks/use-image-generation'
-import type { ModelId, AspectRatio, Resolution } from '@/types'
+import type { ModelId, AspectRatio, Resolution, ThinkingLevel } from '@/types'
 
 export default function TextToImagePage() {
   const [prompt, setPrompt] = useState('')
   const [model, setModel] = useState<ModelId>('gemini-3.1-flash-image-preview')
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>('1:1')
   const [resolution, setResolution] = useState<Resolution>('1K')
+  const [thinkingLevel, setThinkingLevel] = useState<ThinkingLevel>('minimal')
+  const [imageOnly, setImageOnly] = useState(false)
   const { images, text, isLoading, error, generate } = useImageGeneration()
 
   async function handleGenerate() {
@@ -21,6 +23,8 @@ export default function TextToImagePage() {
       model,
       aspectRatio,
       resolution,
+      thinkingLevel,
+      imageOnly,
     })
   }
 
@@ -39,6 +43,10 @@ export default function TextToImagePage() {
             onModelChange={setModel}
             onAspectRatioChange={setAspectRatio}
             onResolutionChange={setResolution}
+            thinkingLevel={thinkingLevel}
+            onThinkingLevelChange={setThinkingLevel}
+            imageOnly={imageOnly}
+            onImageOnlyChange={setImageOnly}
           />
         </div>
 

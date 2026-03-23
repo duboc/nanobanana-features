@@ -68,10 +68,11 @@ export async function generateImage(
     includeThoughts?: boolean
     enableSearchGrounding?: boolean
     enableImageSearch?: boolean
+    imageOnly?: boolean
   }
 ): Promise<GenerationResponse> {
   const config: Record<string, unknown> = {
-    responseModalities: ['TEXT', 'IMAGE'],
+    responseModalities: options?.imageOnly ? ['IMAGE'] : ['TEXT', 'IMAGE'],
   }
 
   const imageConfig = buildImageConfig(options?.aspectRatio, options?.resolution)

@@ -43,7 +43,7 @@ export function PromptInput({
       />
       <div className="absolute bottom-3 right-3 flex items-center gap-2">
         <span className="text-[10px] text-muted-foreground hidden sm:inline">
-          {navigator?.platform?.includes('Mac') ? '⌘' : 'Ctrl'}+Enter
+          {typeof navigator !== 'undefined' && navigator.platform?.includes('Mac') ? '⌘' : 'Ctrl'}+Enter
         </span>
         <Button
           size="icon"
