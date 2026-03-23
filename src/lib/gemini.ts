@@ -10,11 +10,27 @@ import type {
   GroundingMetadata,
 } from '@/types'
 
-const ai = new GoogleGenAI({
-  vertexai: true,
-  project: process.env.GOOGLE_CLOUD_PROJECT!,
-  location: process.env.GOOGLE_CLOUD_LOCATION || 'us-central1',
-})
+// Gemini 3.1 Flash and 3 Pro image models require 'global' location.
+// Gemini 2.5 Flash can use a regional endpoint like 'us-central1'.
+const MODEL_LOCATIONS: Record<string, string> = {
+  'gemini-3.1-flash-image-preview': 'global',
+  'gemini-3-pro-image-preview': 'global',
+  'gemini-2.5-flash-image': process.env.GOOGLE_CLOUD_LOCATION || 'us-central1',
+}
+
+const clients = new Map<string, GoogleGenAI>()
+
+function getClient(model: ModelId): GoogleGenAI {
+  const location = MODEL_LOCATIONS[model] || 'global'
+  if (!clients.has(location)) {
+    clients.set(location, new GoogleGenAI({
+      vertexai: true,
+      project: process.env.GOOGLE_CLOUD_PROJECT!,
+      location,
+    }))
+  }
+  return clients.get(location)!
+}
 
 function buildImageConfig(aspectRatio?: AspectRatio, resolution?: Resolution) {
   const config: Record<string, string> = {}
@@ -100,7 +116,7 @@ export async function generateImage(
     }
   }
 
-  const response = await ai.models.generateContent({
+  const response = await getClient(model).models.generateContent({
     model,
     contents: [{ role: 'user', parts: [{ text: prompt }] }],
     config,
@@ -125,7 +141,7 @@ export async function editImage(
   const imageConfig = buildImageConfig(options?.aspectRatio, options?.resolution)
   if (imageConfig) config.imageConfig = imageConfig
 
-  const response = await ai.models.generateContent({
+  const response = await getClient(model).models.generateContent({
     model,
     contents: [{
       role: 'user',
@@ -163,7 +179,7 @@ export async function generateWithReferences(
     })),
   ]
 
-  const response = await ai.models.generateContent({
+  const response = await getClient(model).models.generateContent({
     model,
     contents: [{ role: 'user', parts }],
     config,
@@ -209,7 +225,7 @@ export async function chatGenerate(
 
   contents.push({ role: 'user', parts: newParts })
 
-  const response = await ai.models.generateContent({
+  const response = await getClient(model).models.generateContent({
     model,
     contents,
     config,
