@@ -14,6 +14,7 @@ import {
   Menu,
   X,
   Cloud,
+  BookOpen,
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -25,6 +26,7 @@ const NAV_ITEMS = [
   { href: '/reference-images', label: 'Reference Images', icon: Images },
   { href: '/search-grounding', label: 'Search Grounding', icon: Search },
   { href: '/style-gallery', label: 'Style Gallery', icon: Palette },
+  { href: '/docs', label: 'Documentation', icon: BookOpen },
 ]
 
 export function Sidebar() {
