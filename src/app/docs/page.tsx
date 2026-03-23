@@ -1173,13 +1173,13 @@ grounding.searchEntryPoint?.renderedContent`} />
                   </tr>
                   <tr className="border-b border-border">
                     <td className="px-4 py-2.5 font-medium">2K</td>
-                    <td className="px-4 py-2.5 text-center text-muted-foreground">1,120</td>
+                    <td className="px-4 py-2.5 text-center text-muted-foreground">1,680</td>
                     <td className="px-4 py-2.5 text-center text-muted-foreground">1,120</td>
                     <td className="px-4 py-2.5 text-center text-muted-foreground">-</td>
                   </tr>
                   <tr className="border-b border-border">
                     <td className="px-4 py-2.5 font-medium">4K</td>
-                    <td className="px-4 py-2.5 text-center text-muted-foreground">2,000</td>
+                    <td className="px-4 py-2.5 text-center text-muted-foreground">2,520</td>
                     <td className="px-4 py-2.5 text-center text-muted-foreground">2,000</td>
                     <td className="px-4 py-2.5 text-center text-muted-foreground">-</td>
                   </tr>

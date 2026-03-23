@@ -40,8 +40,8 @@ const PRICING: Record<ModelKey, ModelPricing> = {
     resolutions: [
       { label: '512', tokens: 747 },
       { label: '1K', tokens: 1120 },
-      { label: '2K', tokens: 1120 },
-      { label: '4K', tokens: 2000 },
+      { label: '2K', tokens: 1680 },
+      { label: '4K', tokens: 2520 },
     ],
   },
   pro3: {
@@ -207,7 +207,7 @@ export default function PricingPage() {
                 ))}
               </div>
               <p className="text-[11px] text-muted-foreground">
-                {formatNumber(effectiveResolution.tokens)} image output tokens per image
+                {formatNumber(effectiveResolution.tokens)} tokens per image = {formatCost((effectiveResolution.tokens / 1_000_000) * model.imageOutputPer1M)} per image (image output only)
               </p>
             </div>
           </div>
@@ -446,10 +446,26 @@ export default function PricingPage() {
                 <thead>
                   <tr className="border-b border-border bg-muted/50">
                     <th className="px-4 py-3 text-left font-medium">Model</th>
-                    <th className="px-4 py-3 text-center font-medium">1K Cost</th>
-                    <th className="px-4 py-3 text-center font-medium">2K Cost</th>
-                    <th className="px-4 py-3 text-center font-medium">4K Cost</th>
-                    <th className="px-4 py-3 text-center font-medium">Monthly (1K)</th>
+                    <th className="px-4 py-3 text-center font-medium">
+                      <div>1K</div>
+                      <div className="text-[10px] font-normal text-muted-foreground">per request</div>
+                    </th>
+                    <th className="px-4 py-3 text-center font-medium">
+                      <div>2K</div>
+                      <div className="text-[10px] font-normal text-muted-foreground">per request</div>
+                    </th>
+                    <th className="px-4 py-3 text-center font-medium">
+                      <div>4K</div>
+                      <div className="text-[10px] font-normal text-muted-foreground">per request</div>
+                    </th>
+                    <th className="px-4 py-3 text-center font-medium">
+                      <div>Per Image</div>
+                      <div className="text-[10px] font-normal text-muted-foreground">image tokens only</div>
+                    </th>
+                    <th className="px-4 py-3 text-center font-medium">
+                      <div>Monthly</div>
+                      <div className="text-[10px] font-normal text-muted-foreground">at selected res.</div>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -467,6 +483,15 @@ export default function PricingPage() {
                     const cost2k = r2k ? calcCost(r2k) : null
                     const cost4k = r4k ? calcCost(r4k) : null
 
+                    // Per-image cost at currently selected resolution (or 1K fallback)
+                    const selectedRes = m.resolutions.find(r => r.label === resolution) || m.resolutions.find(r => r.label === '1K') || m.resolutions[0]
+                    const perImageCost = (selectedRes.tokens / 1_000_000) * m.imageOutputPer1M
+
+                    // Monthly at the selected resolution
+                    const selectedFullCost = m.resolutions.find(r => r.label === resolution)
+                      ? calcCost(m.resolutions.find(r => r.label === resolution)!)
+                      : cost1k
+
                     return (
                       <tr key={key} className={cn('border-b border-border last:border-0', selectedModel === key && 'bg-muted/30')}>
                         <td className="px-4 py-2.5">
@@ -481,8 +506,11 @@ export default function PricingPage() {
                         <td className="px-4 py-2.5 text-center text-[13px]">
                           {cost4k !== null ? formatCost(cost4k) : '-'}
                         </td>
+                        <td className="px-4 py-2.5 text-center text-[13px] text-gcp-blue font-medium">
+                          {formatCost(perImageCost)}
+                        </td>
                         <td className="px-4 py-2.5 text-center text-[13px] font-medium">
-                          {cost1k !== null ? formatCost(cost1k * monthlyVolume) : '-'}
+                          {selectedFullCost !== null ? formatCost(selectedFullCost * monthlyVolume) : '-'}
                         </td>
                       </tr>
                     )
@@ -490,6 +518,10 @@ export default function PricingPage() {
                 </tbody>
               </table>
             </div>
+
+            <p className="text-[11px] text-muted-foreground mt-3">
+              &quot;Per Image&quot; shows the image output token cost only (at the selected resolution above). Full request cost includes input + text output tokens.
+            </p>
           </div>
 
           {/* Detailed breakdown toggle */}
@@ -564,13 +596,13 @@ export default function PricingPage() {
                     </tr>
                     <tr className="border-b border-border">
                       <td className="px-4 py-2.5 font-medium">2K</td>
-                      <td className="px-4 py-2.5 text-center">1,120</td>
+                      <td className="px-4 py-2.5 text-center">1,680</td>
                       <td className="px-4 py-2.5 text-center">1,120</td>
                       <td className="px-4 py-2.5 text-center text-muted-foreground">-</td>
                     </tr>
                     <tr className="border-b border-border">
                       <td className="px-4 py-2.5 font-medium">4K</td>
-                      <td className="px-4 py-2.5 text-center">2,000</td>
+                      <td className="px-4 py-2.5 text-center">2,520</td>
                       <td className="px-4 py-2.5 text-center">2,000</td>
                       <td className="px-4 py-2.5 text-center text-muted-foreground">-</td>
                     </tr>
@@ -593,8 +625,8 @@ export default function PricingPage() {
                     {[
                       { res: '512', flash: 747, pro: null, v25: null },
                       { res: '1K', flash: 1120, pro: 1120, v25: 1290 },
-                      { res: '2K', flash: 1120, pro: 1120, v25: null },
-                      { res: '4K', flash: 2000, pro: 2000, v25: null },
+                      { res: '2K', flash: 1680, pro: 1120, v25: null },
+                      { res: '4K', flash: 2520, pro: 2000, v25: null },
                     ].map(row => (
                       <tr key={row.res} className="border-b border-border">
                         <td className="px-4 py-2.5 font-medium">{row.res}</td>
