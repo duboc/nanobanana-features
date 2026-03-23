@@ -23,6 +23,14 @@ import {
   CheckCircle2,
   Copy,
   Check,
+  RotateCw,
+  Eraser,
+  Layers,
+  PenTool,
+  Eye,
+  Fingerprint,
+  Globe,
+  Info,
 } from 'lucide-react'
 
 // ---------------------------------------------------------------------------
@@ -91,14 +99,17 @@ const SECTIONS = [
   { id: 'models', label: 'Models', icon: Cpu },
   { id: 'text-to-image', label: 'Text to Image', icon: ImageIcon },
   { id: 'image-editing', label: 'Image Editing', icon: Wand2 },
+  { id: 'editing-techniques', label: 'Editing Techniques', icon: PenTool },
   { id: 'multi-turn', label: 'Multi-turn Conversations', icon: MessageSquare },
   { id: 'reference-images', label: 'Reference Images', icon: Images },
   { id: 'search-grounding', label: 'Search Grounding', icon: Search },
-  { id: 'thinking', label: 'Thinking Levels', icon: Lightbulb },
+  { id: 'thinking', label: 'Thinking & Signatures', icon: Lightbulb },
   { id: 'config', label: 'Configuration Options', icon: Settings2 },
-  { id: 'resolutions', label: 'Resolutions', icon: Maximize },
+  { id: 'resolutions', label: 'Resolutions & Dimensions', icon: Maximize },
   { id: 'styles', label: 'Style Prompting', icon: Palette },
   { id: 'best-practices', label: 'Best Practices', icon: Zap },
+  { id: 'technical-specs', label: 'Technical Specifications', icon: Info },
+  { id: 'limitations', label: 'Limitations', icon: AlertTriangle },
   { id: 'api-reference', label: 'API Reference', icon: Code2 },
 ]
 
@@ -130,6 +141,10 @@ function ComparisonTable() {
             ['Object Images', '10', '6', '3'],
             ['Resolutions', '512, 1K, 2K, 4K', '1K, 2K, 4K', '1K'],
             ['Aspect Ratios', '14 (all)', '10 (standard)', '10 (standard)'],
+            ['Max Input Tokens', '131,072', '65,536', '32,768'],
+            ['Max Output Tokens', '32,768', '32,768', '32,768'],
+            ['Knowledge Cutoff', 'Jan 2025', 'Jan 2025', 'Jun 2024'],
+            ['Launch Stage', 'Preview', 'Preview', 'GA'],
             ['Best For', 'Speed, volume', 'Quality, complex', 'Efficient, simple'],
           ].map(([feature, flash, pro, v25], i) => (
             <tr key={i} className="border-b border-border last:border-0">
@@ -235,7 +250,14 @@ export default function DocsPage() {
               <li><strong>Instruction following</strong> &mdash; Precisely follows detailed, multi-step prompts</li>
               <li><strong>Conversational editing</strong> &mdash; Edit images through natural dialogue</li>
               <li><strong>Search grounding</strong> &mdash; Generate images based on real-time web data</li>
+              <li><strong>SynthID watermark</strong> &mdash; All generated images include an invisible SynthID watermark for provenance verification</li>
             </ul>
+
+            <Tip>
+              All generated images include a <strong>SynthID watermark</strong> &mdash; an invisible, robust digital
+              watermark that can be detected to verify the image was AI-generated. This is applied automatically
+              and cannot be disabled. Content Credentials (C2PA) metadata is also supported.
+            </Tip>
           </section>
 
           {/* ============================================================== */}
@@ -424,10 +446,187 @@ for (const part of parts) {
             </ul>
 
             <Warning>
-              Supported input formats: <strong>PNG, JPEG, GIF, WebP</strong>. Images are sent as base64-encoded
-              inline data. Very large images may increase latency &mdash; consider resizing to a reasonable resolution
-              before sending.
+              Supported input formats: <strong>PNG, JPEG, WebP, HEIC, HEIF</strong>. Images are sent as base64-encoded
+              inline data. Max file size is <strong>7MB</strong> for inline data or <strong>30MB</strong> from Google Cloud
+              Storage. Very large images increase latency &mdash; consider resizing before sending.
             </Warning>
+          </section>
+
+          {/* ============================================================== */}
+          {/* EDITING TECHNIQUES */}
+          {/* ============================================================== */}
+          <section id="editing-techniques" className="scroll-mt-20">
+            <h2 className="text-2xl font-semibold text-foreground mb-4">Editing Techniques</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+              Beyond basic editing, Nano Banana supports several advanced image manipulation techniques.
+              These all work by providing one or more images alongside descriptive text prompts.
+            </p>
+
+            <div className="space-y-8">
+              {/* Inpainting */}
+              <div>
+                <h3 className="text-lg font-medium text-foreground mb-3 flex items-center gap-2">
+                  <Eraser className="h-4 w-4 text-gcp-blue" />
+                  Inpainting (Semantic Masking)
+                </h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Conversationally define a &ldquo;mask&rdquo; by describing the area you want to edit.
+                  The model identifies the region semantically and modifies only that part while preserving everything else.
+                </p>
+                <CodeBlock code={`// Inpainting: change only a specific element
+const response = await ai.models.generateContent({
+  model: 'gemini-3.1-flash-image-preview',
+  contents: [{
+    role: 'user',
+    parts: [
+      { inlineData: { data: livingRoomBase64, mimeType: 'image/png' } },
+      { text: 'Change only the blue sofa to be a vintage, brown leather chesterfield sofa. Keep the rest of the room, including the pillows and lighting, unchanged.' },
+    ],
+  }],
+  config: { responseModalities: ['TEXT', 'IMAGE'] },
+})`} />
+                <Tip>
+                  Be explicit about what should remain unchanged. The more detail you give about the &ldquo;mask&rdquo; area,
+                  the better the model isolates the edit region.
+                </Tip>
+              </div>
+
+              {/* Style Transfer */}
+              <div>
+                <h3 className="text-lg font-medium text-foreground mb-3 flex items-center gap-2">
+                  <Palette className="h-4 w-4 text-gcp-green" />
+                  Style Transfer
+                </h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Provide an image and ask the model to recreate its content in a completely different artistic style
+                  while preserving the original composition.
+                </p>
+                <CodeBlock code={`// Style transfer: photo to Van Gogh painting
+contents: [{
+  role: 'user',
+  parts: [
+    { inlineData: { data: cityPhotoBase64, mimeType: 'image/png' } },
+    { text: 'Transform this photograph of a city street at night into the style of Van Gogh\\'s "Starry Night". Preserve the composition of buildings and cars, but render with swirling, impasto brushstrokes and a palette of deep blues and bright yellows.' },
+  ],
+}]`} />
+              </div>
+
+              {/* Adding / Removing Elements */}
+              <div>
+                <h3 className="text-lg font-medium text-foreground mb-3 flex items-center gap-2">
+                  <Layers className="h-4 w-4 text-gcp-yellow" />
+                  Adding & Removing Elements
+                </h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Add new objects to an image or remove existing ones. The model automatically matches the
+                  original style, lighting, and perspective.
+                </p>
+                <CodeBlock code={`// Add an element to an existing image
+contents: [{
+  role: 'user',
+  parts: [
+    { text: 'Add a small, knitted wizard hat on the cat\\'s head. Make it look comfortable and not falling off.' },
+    { inlineData: { data: catPhotoBase64, mimeType: 'image/png' } },
+  ],
+}]`} />
+              </div>
+
+              {/* Sketch to Photo */}
+              <div>
+                <h3 className="text-lg font-medium text-foreground mb-3 flex items-center gap-2">
+                  <PenTool className="h-4 w-4 text-gcp-red" />
+                  Sketch to Photo (Bring to Life)
+                </h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Upload a rough sketch or drawing and ask the model to refine it into a finished, polished image.
+                  Great for concept art, product design, and architectural visualization.
+                </p>
+                <CodeBlock code={`// Turn a sketch into a polished photo
+contents: [{
+  role: 'user',
+  parts: [
+    { inlineData: { data: sketchBase64, mimeType: 'image/png' } },
+    { text: 'Turn this rough pencil sketch of a futuristic car into a polished photo of the finished concept car in a showroom. Keep the sleek lines from the sketch but add metallic blue paint and neon rim lighting.' },
+  ],
+}]`} />
+              </div>
+
+              {/* Character Consistency / 360 View */}
+              <div>
+                <h3 className="text-lg font-medium text-foreground mb-3 flex items-center gap-2">
+                  <RotateCw className="h-4 w-4 text-gcp-blue" />
+                  Character Consistency & 360 Views
+                </h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Generate consistent views of a character from different angles by including previously
+                  generated images as references. This maintains identity across multiple generations.
+                </p>
+                <CodeBlock code={`// Generate a profile view from a front-facing photo
+contents: [{
+  role: 'user',
+  parts: [
+    { text: 'A studio portrait of this person against white, in profile looking right' },
+    { inlineData: { data: frontViewBase64, mimeType: 'image/png' } },
+  ],
+}]
+
+// Then use both images for a 3/4 view
+contents: [{
+  role: 'user',
+  parts: [
+    { text: 'Generate a 3/4 view of this same person, looking slightly left' },
+    { inlineData: { data: frontViewBase64, mimeType: 'image/png' } },
+    { inlineData: { data: profileViewBase64, mimeType: 'image/png' } },
+  ],
+}]`} />
+              </div>
+
+              {/* High-Fidelity Detail Preservation */}
+              <div>
+                <h3 className="text-lg font-medium text-foreground mb-3 flex items-center gap-2">
+                  <Eye className="h-4 w-4 text-gcp-green" />
+                  High-Fidelity Detail Preservation
+                </h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  When critical details (faces, logos, text) must be preserved during editing,
+                  describe them in great detail alongside your edit request.
+                </p>
+                <CodeBlock code={`// Preserve face while adding a logo to a t-shirt
+contents: [{
+  role: 'user',
+  parts: [
+    { inlineData: { data: personBase64, mimeType: 'image/png' } },
+    { inlineData: { data: logoBase64, mimeType: 'image/png' } },
+    { text: 'Take the person from the first image (brown hair, blue eyes, neutral expression). Add the logo from the second image onto their black t-shirt. Ensure the face and features remain completely unchanged. The logo should look naturally printed on the fabric, following the folds.' },
+  ],
+}]`} />
+                <Tip>
+                  The more specific you are about features that must be preserved, the better the model
+                  retains them. Describe distinguishing features explicitly in your prompt.
+                </Tip>
+              </div>
+
+              {/* Advanced Composition */}
+              <div>
+                <h3 className="text-lg font-medium text-foreground mb-3 flex items-center gap-2">
+                  <Layers className="h-4 w-4 text-gcp-yellow" />
+                  Advanced Composition (Multiple Images)
+                </h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Combine elements from multiple source images into a single, cohesive scene.
+                  Perfect for e-commerce mockups, creative collages, and virtual try-on.
+                </p>
+                <CodeBlock code={`// Virtual try-on: combine product + model
+contents: [{
+  role: 'user',
+  parts: [
+    { inlineData: { data: dressBase64, mimeType: 'image/png' } },
+    { inlineData: { data: modelBase64, mimeType: 'image/png' } },
+    { text: 'Create a professional e-commerce fashion photo. Take the blue floral dress from the first image and let the woman from the second image wear it. Generate a realistic, full-body shot with adjusted lighting and shadows.' },
+  ],
+}]`} />
+              </div>
+            </div>
           </section>
 
           {/* ============================================================== */}
@@ -645,29 +844,34 @@ grounding.searchEntryPoint?.renderedContent`} />
           {/* THINKING LEVELS */}
           {/* ============================================================== */}
           <section id="thinking" className="scroll-mt-20">
-            <h2 className="text-2xl font-semibold text-foreground mb-4">Thinking Levels</h2>
+            <h2 className="text-2xl font-semibold text-foreground mb-4">Thinking & Thought Signatures</h2>
             <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-              Nano Banana 2 (Flash 3.1) supports configurable <strong>thinking levels</strong> that control
-              how much internal reasoning the model performs before generating. Higher thinking improves
-              output quality at the cost of increased latency.
+              Gemini 3 image models use a <strong>thinking process</strong> to reason through complex prompts.
+              The model generates up to <strong>2 interim &ldquo;thought images&rdquo;</strong> to test composition
+              and logic before producing the final output. Thinking is <strong>enabled by default and cannot be disabled</strong>.
             </p>
 
+            <h3 className="text-lg font-medium text-foreground mt-6 mb-3">Controlling Thinking (Flash 3.1 Only)</h3>
+            <p className="text-sm text-muted-foreground mb-3">
+              Only Nano Banana 2 (Flash 3.1) allows configuring the thinking level. Pro 3 and Flash 2.5
+              use their default thinking behavior without adjustment.
+            </p>
             <CodeBlock code={`config: {
   responseModalities: ['TEXT', 'IMAGE'],
   thinkingConfig: {
-    thinkingLevel: 'High',        // 'Minimal' or 'High'
-    includeThoughts: false,       // Include reasoning tokens in response
+    thinkingLevel: 'High',        // 'Minimal' or 'High' (Flash 3.1 only)
+    includeThoughts: true,        // Show reasoning tokens in response
   },
 }`} />
 
             <div className="my-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
-                <h4 className="text-sm font-semibold text-foreground mb-2">Minimal</h4>
+                <h4 className="text-sm font-semibold text-foreground mb-2">Minimal (Default)</h4>
                 <ul className="space-y-1 text-xs text-muted-foreground list-disc pl-4">
                   <li>Fastest response time</li>
                   <li>Good for simple, straightforward prompts</li>
                   <li>Suitable for high-volume, low-latency workflows</li>
-                  <li>Default mode for most use cases</li>
+                  <li>Still uses some thinking (not zero)</li>
                 </ul>
               </div>
               <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
@@ -682,11 +886,46 @@ grounding.searchEntryPoint?.renderedContent`} />
             </div>
 
             <Warning>
-              When <code className="text-xs bg-muted px-1.5 py-0.5 rounded">includeThoughts: true</code>, the
-              response will contain parts with <code className="text-xs bg-muted px-1.5 py-0.5 rounded">thought: true</code>.
-              These should be filtered from display but preserved if you&apos;re building conversation history for
-              multi-turn interactions.
+              Thinking tokens are <strong>billed regardless</strong> of whether
+              <code className="text-xs bg-muted px-1.5 py-0.5 rounded mx-1">includeThoughts</code> is true or false.
+              The thinking process always runs &mdash; you&apos;re just choosing whether to see it.
             </Warning>
+
+            <h3 className="text-lg font-medium text-foreground mt-8 mb-3">Thought Signatures</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+              Thought signatures are <strong>encrypted representations</strong> of the model&apos;s internal thought
+              process. They preserve reasoning context across multi-turn interactions. You <strong>must pass
+              them back exactly as received</strong> in subsequent turns &mdash; failure to do so may cause responses to fail.
+            </p>
+
+            <div className="rounded-lg border border-border bg-card p-5 shadow-sm space-y-3 my-4">
+              <h4 className="text-sm font-semibold text-foreground">Signature Rules</h4>
+              <ul className="space-y-2 text-xs text-muted-foreground list-disc pl-4">
+                <li>All <code className="bg-muted px-1 py-0.5 rounded">inline_data</code> image parts in the
+                  final response (not thoughts) include a <code className="bg-muted px-1 py-0.5 rounded">thought_signature</code></li>
+                <li>The <strong>first text part</strong> after any thought parts also gets a signature</li>
+                <li>Image parts inside thoughts do <strong>not</strong> have signatures</li>
+                <li>Follow-up text parts after the first one do <strong>not</strong> have signatures</li>
+              </ul>
+            </div>
+
+            <CodeBlock code={`// Example response structure with thought signatures:
+[
+  { inlineData: { data: "...", mimeType: "image/png" }, thought: true },
+  // ^ Thought image - NO signature
+  { text: "Here is the result...", thought_signature: "<Signature_A>" },
+  // ^ First non-thought text - HAS signature
+  { inlineData: { data: "...", mimeType: "image/png" }, thought_signature: "<Signature_B>" },
+  // ^ Final image - HAS signature
+  { text: "You can see the details..." },
+  // ^ Follow-up text - NO signature
+]`} />
+
+            <Tip>
+              If you use the official Google Gen AI SDKs with the <strong>chat feature</strong> (or append the full
+              model response object directly to history), thought signatures are handled automatically. You do
+              not need to manually extract or manage them.
+            </Tip>
           </section>
 
           {/* ============================================================== */}
@@ -735,7 +974,15 @@ grounding.searchEntryPoint?.renderedContent`} />
           {/* RESOLUTIONS */}
           {/* ============================================================== */}
           <section id="resolutions" className="scroll-mt-20">
-            <h2 className="text-2xl font-semibold text-foreground mb-4">Resolutions</h2>
+            <h2 className="text-2xl font-semibold text-foreground mb-4">Resolutions & Pixel Dimensions</h2>
+
+            <Warning>
+              Resolution values <strong>must use uppercase K</strong> (e.g., <code className="text-xs bg-muted px-1.5 py-0.5 rounded">1K</code>,
+              <code className="text-xs bg-muted px-1.5 py-0.5 rounded mx-1">2K</code>,
+              <code className="text-xs bg-muted px-1.5 py-0.5 rounded">4K</code>). Lowercase values
+              (e.g., <code className="text-xs bg-muted px-1.5 py-0.5 rounded">1k</code>) will be rejected.
+              The <code className="text-xs bg-muted px-1.5 py-0.5 rounded">512</code> value does not use a K suffix.
+            </Warning>
 
             <div className="my-4 overflow-x-auto">
               <table className="w-full text-sm border-collapse">
@@ -818,6 +1065,81 @@ grounding.searchEntryPoint?.renderedContent`} />
                 )
               })}
             </div>
+
+            <h3 className="text-lg font-medium text-foreground mt-8 mb-3">Pixel Dimensions by Aspect Ratio (Flash 3.1)</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Exact pixel dimensions for each aspect ratio and resolution combination. The model defaults
+              to matching output size to input image size, or 1:1 squares when no input image is provided.
+            </p>
+            <div className="my-4 overflow-x-auto">
+              <table className="w-full text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-border bg-muted/50">
+                    <th className="px-3 py-2 text-left font-medium">Ratio</th>
+                    <th className="px-3 py-2 text-center font-medium">512</th>
+                    <th className="px-3 py-2 text-center font-medium">1K</th>
+                    <th className="px-3 py-2 text-center font-medium">2K</th>
+                    <th className="px-3 py-2 text-center font-medium">4K</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    ['1:1', '512x512', '1024x1024', '2048x2048', '4096x4096'],
+                    ['2:3', '424x632', '848x1264', '1696x2528', '3392x5056'],
+                    ['3:2', '632x424', '1264x848', '2528x1696', '5056x3392'],
+                    ['3:4', '448x600', '896x1200', '1792x2400', '3584x4800'],
+                    ['4:3', '600x448', '1200x896', '2400x1792', '4800x3584'],
+                    ['4:5', '464x576', '928x1152', '1856x2304', '3712x4608'],
+                    ['5:4', '576x464', '1152x928', '2304x1856', '4608x3712'],
+                    ['9:16', '384x688', '768x1376', '1536x2752', '3072x5504'],
+                    ['16:9', '688x384', '1376x768', '2752x1536', '5504x3072'],
+                    ['21:9', '792x168', '1584x672', '3168x1344', '6336x2688'],
+                    ['1:4', '256x1024', '512x2048', '1024x4096', '2048x8192'],
+                    ['1:8', '192x1536', '384x3072', '768x6144', '1536x12288'],
+                    ['4:1', '1024x256', '2048x512', '4096x1024', '8192x2048'],
+                    ['8:1', '1536x192', '3072x384', '6144x768', '12288x1536'],
+                  ].map(([ratio, r512, r1k, r2k, r4k], i) => (
+                    <tr key={i} className="border-b border-border last:border-0">
+                      <td className="px-3 py-1.5 font-medium">{ratio}</td>
+                      <td className="px-3 py-1.5 text-center text-muted-foreground">{r512}</td>
+                      <td className="px-3 py-1.5 text-center text-muted-foreground">{r1k}</td>
+                      <td className="px-3 py-1.5 text-center text-muted-foreground">{r2k}</td>
+                      <td className="px-3 py-1.5 text-center text-muted-foreground">{r4k}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <h3 className="text-lg font-medium text-foreground mt-8 mb-3">Output Token Costs</h3>
+            <div className="my-4 overflow-x-auto">
+              <table className="w-full text-sm border-collapse">
+                <thead>
+                  <tr className="border-b border-border bg-muted/50">
+                    <th className="px-4 py-3 text-left font-medium">Resolution</th>
+                    <th className="px-4 py-3 text-center font-medium">Output Tokens</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-border">
+                    <td className="px-4 py-2.5 font-medium">512</td>
+                    <td className="px-4 py-2.5 text-center text-muted-foreground">747 tokens per image</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="px-4 py-2.5 font-medium">1K</td>
+                    <td className="px-4 py-2.5 text-center text-muted-foreground">1,120 tokens per image</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="px-4 py-2.5 font-medium">2K</td>
+                    <td className="px-4 py-2.5 text-center text-muted-foreground">1,120 tokens per image</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="px-4 py-2.5 font-medium">4K</td>
+                    <td className="px-4 py-2.5 text-center text-muted-foreground">2,000 tokens per image</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </section>
 
           {/* ============================================================== */}
@@ -862,6 +1184,16 @@ grounding.searchEntryPoint?.renderedContent`} />
                   template: 'A clear, 45-degree top-down isometric miniature 3D cartoon scene of {subject}. Use soft, refined textures with realistic PBR materials and gentle lighting.',
                   tip: 'Always specify "45-degree top-down isometric" for consistent perspective.',
                 },
+                {
+                  name: 'Minimalist / Negative Space',
+                  template: 'A minimalist composition featuring a single {subject} positioned in the {position} of the frame. The background is a vast, empty {color} canvas, creating significant negative space. Soft, subtle lighting.',
+                  tip: 'Excellent for backgrounds where text will be overlaid. Specify the subject position for control.',
+                },
+                {
+                  name: 'Search-Grounded Data Visual',
+                  template: 'Visualize {topic} as a {format}. Use current real-time data. Add {visual_elements}.',
+                  tip: 'Enable Google Search grounding for this template. Great for weather, sports, news, and data visualizations.',
+                },
               ].map(style => (
                 <div key={style.name} className="rounded-lg border border-border bg-card p-4 shadow-sm">
                   <h4 className="text-sm font-semibold text-foreground mb-2">{style.name}</h4>
@@ -895,6 +1227,10 @@ grounding.searchEntryPoint?.renderedContent`} />
                   <li><strong>Specify what you don&apos;t want</strong> &mdash; &ldquo;Without text&rdquo;, &ldquo;no watermark&rdquo;, &ldquo;clean background&rdquo;</li>
                   <li><strong>Reference known styles</strong> &mdash; &ldquo;In the style of Studio Ghibli&rdquo;, &ldquo;Wes Anderson color palette&rdquo;, &ldquo;Bauhaus design&rdquo;</li>
                   <li><strong>Use photography terms</strong> &mdash; Bokeh, golden hour, rule of thirds, leading lines, depth of field</li>
+                  <li><strong>Use semantic negatives</strong> &mdash; Instead of &ldquo;no cars&rdquo;, describe the scene positively: &ldquo;an empty, deserted street with no signs of traffic&rdquo;</li>
+                  <li><strong>Break complex scenes into steps</strong> &mdash; &ldquo;First, create a misty forest background. Then, add a stone altar. Finally, place a glowing sword on top.&rdquo;</li>
+                  <li><strong>Generate text first</strong> &mdash; When creating images with text, first generate the text content, then ask for an image including it</li>
+                  <li><strong>Provide context and intent</strong> &mdash; Explain the purpose: &ldquo;for a high-end skincare brand&rdquo; yields better results than generic instructions</li>
                 </ul>
               </div>
 
@@ -937,6 +1273,183 @@ grounding.searchEntryPoint?.renderedContent`} />
                   <li><strong>Don&apos;t use search grounding with Flash 2.5</strong> &mdash; Only Flash 3.1 and Pro 3 support it</li>
                   <li><strong>Don&apos;t mix up imageSize and imageResolution</strong> &mdash; The config key is <code className="text-xs bg-muted px-1.5 py-0.5 rounded">imageSize</code> (not imageResolution)</li>
                   <li><strong>Handle safety filters</strong> &mdash; The model may refuse to generate certain content; always handle empty responses gracefully</li>
+                  <li><strong>Don&apos;t forget thought signatures</strong> &mdash; In multi-turn, pass thought signatures back exactly as received or responses may fail</li>
+                </ul>
+              </div>
+            </div>
+
+            <Tip>
+              <strong>System instructions</strong> are supported by all three models. Use them to set persistent
+              behavior, style preferences, or safety guidelines that apply across all turns in a conversation.
+            </Tip>
+
+            <Tip>
+              <strong>Batch API:</strong> For high-volume image generation, use the Batch API for higher rate limits
+              in exchange for up to 24-hour turnaround. Ideal for generating large datasets of images offline.
+            </Tip>
+          </section>
+
+          {/* ============================================================== */}
+          {/* TECHNICAL SPECIFICATIONS */}
+          {/* ============================================================== */}
+          <section id="technical-specs" className="scroll-mt-20">
+            <h2 className="text-2xl font-semibold text-foreground mb-4">Technical Specifications</h2>
+
+            <div className="my-6 overflow-x-auto">
+              <table className="w-full text-sm border-collapse">
+                <thead>
+                  <tr className="border-b border-border bg-muted/50">
+                    <th className="px-4 py-3 text-left font-medium">Specification</th>
+                    <th className="px-4 py-3 text-center font-medium text-gcp-blue">Flash 3.1</th>
+                    <th className="px-4 py-3 text-center font-medium text-gcp-green">Pro 3</th>
+                    <th className="px-4 py-3 text-center font-medium text-gcp-yellow">Flash 2.5</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    ['Max Input Tokens', '131,072', '65,536', '32,768'],
+                    ['Max Output Tokens', '32,768', '32,768', '32,768'],
+                    ['Max Images per Prompt', '14', '14', '3'],
+                    ['Max Output Images', 'Limited by tokens', 'Limited by tokens', '10'],
+                    ['Max File Size (Inline)', '7 MB', '7 MB', '7 MB'],
+                    ['Max File Size (GCS)', '30 MB', '30 MB', '30 MB'],
+                    ['Input Size Limit', '500 MB', '500 MB', '500 MB'],
+                    ['Knowledge Cutoff', 'January 2025', 'January 2025', 'June 2024'],
+                    ['Launch Stage', 'Public Preview', 'Public Preview', 'GA'],
+                    ['Default Temperature', '1.0', '0.0 - 2.0', '1.0'],
+                    ['Default topP', '0.95', '0.95', '0.95'],
+                  ].map(([spec, flash, pro, v25], i) => (
+                    <tr key={i} className="border-b border-border last:border-0">
+                      <td className="px-4 py-2.5 font-medium text-foreground">{spec}</td>
+                      <td className="px-4 py-2.5 text-center text-muted-foreground text-xs">{flash}</td>
+                      <td className="px-4 py-2.5 text-center text-muted-foreground text-xs">{pro}</td>
+                      <td className="px-4 py-2.5 text-center text-muted-foreground text-xs">{v25}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <h3 className="text-lg font-medium text-foreground mt-6 mb-3">Supported Image MIME Types</h3>
+            <div className="flex flex-wrap gap-2 my-4">
+              {['image/png', 'image/jpeg', 'image/webp', 'image/heic', 'image/heif'].map(mime => (
+                <code key={mime} className="rounded-md bg-muted px-3 py-1.5 text-xs font-medium">{mime}</code>
+              ))}
+            </div>
+
+            <h3 className="text-lg font-medium text-foreground mt-6 mb-3">Supported Capabilities</h3>
+            <div className="my-4 overflow-x-auto">
+              <table className="w-full text-sm border-collapse">
+                <thead>
+                  <tr className="border-b border-border bg-muted/50">
+                    <th className="px-4 py-3 text-left font-medium">Capability</th>
+                    <th className="px-4 py-3 text-center font-medium">Flash 3.1</th>
+                    <th className="px-4 py-3 text-center font-medium">Pro 3</th>
+                    <th className="px-4 py-3 text-center font-medium">Flash 2.5</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    ['System Instructions', 'yes', 'yes', 'yes'],
+                    ['Google Search Grounding', 'yes', 'yes', 'no'],
+                    ['Image Search Grounding', 'yes', 'no', 'no'],
+                    ['Thinking (configurable)', 'yes', 'no', 'no'],
+                    ['Thinking (default)', 'yes', 'yes', 'no'],
+                    ['Content Credentials (C2PA)', 'yes', 'yes', 'yes'],
+                    ['SynthID Watermark', 'yes', 'yes', 'yes'],
+                    ['Count Tokens', 'yes', 'yes', 'yes'],
+                    ['Batch Prediction', 'yes', 'yes', 'yes'],
+                    ['Code Execution', 'no', 'no', 'no'],
+                    ['Function Calling', 'no', 'no', 'no'],
+                    ['Context Caching', 'no', 'no', 'no'],
+                  ].map(([cap, flash, pro, v25], i) => (
+                    <tr key={i} className="border-b border-border last:border-0">
+                      <td className="px-4 py-2 font-medium text-foreground">{cap}</td>
+                      <td className="px-4 py-2 text-center">
+                        {flash === 'yes' ? <CheckCircle2 className="inline h-4 w-4 text-gcp-green" /> : <span className="text-muted-foreground">-</span>}
+                      </td>
+                      <td className="px-4 py-2 text-center">
+                        {pro === 'yes' ? <CheckCircle2 className="inline h-4 w-4 text-gcp-green" /> : <span className="text-muted-foreground">-</span>}
+                      </td>
+                      <td className="px-4 py-2 text-center">
+                        {v25 === 'yes' ? <CheckCircle2 className="inline h-4 w-4 text-gcp-green" /> : <span className="text-muted-foreground">-</span>}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <h3 className="text-lg font-medium text-foreground mt-6 mb-3">Deployment Regions</h3>
+            <p className="text-sm text-muted-foreground mb-3">
+              Flash 3.1 and Pro 3 are available in the <strong>global</strong> region. Flash 2.5 (GA) is available
+              in additional regions including us-central1, us-east1, us-west1, europe-west1, europe-west4, and more.
+            </p>
+          </section>
+
+          {/* ============================================================== */}
+          {/* LIMITATIONS */}
+          {/* ============================================================== */}
+          <section id="limitations" className="scroll-mt-20">
+            <h2 className="text-2xl font-semibold text-foreground mb-4">Limitations</h2>
+
+            <div className="space-y-4">
+              <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
+                <h4 className="text-sm font-semibold text-foreground mb-2">Language Support</h4>
+                <p className="text-xs text-muted-foreground mb-2">
+                  For best performance, use the following languages:
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {['EN', 'AR', 'DE', 'ES', 'FR', 'HI', 'ID', 'IT', 'JA', 'KO', 'PT', 'RU', 'UA', 'VI', 'ZH'].map(lang => (
+                    <span key={lang} className="rounded bg-muted px-2 py-0.5 text-[10px] font-medium">{lang}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
+                <h4 className="text-sm font-semibold text-foreground mb-2">Input Limitations</h4>
+                <ul className="space-y-1.5 text-xs text-muted-foreground list-disc pl-4">
+                  <li>Image generation does <strong>not support audio or video inputs</strong></li>
+                  <li>Flash 2.5 works best with up to <strong>3 images</strong> as input</li>
+                  <li>Pro 3 supports <strong>5 images with high fidelity</strong>, up to 14 total</li>
+                  <li>Flash 3.1 supports <strong>4 character images</strong> and <strong>10 object images</strong></li>
+                </ul>
+              </div>
+
+              <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
+                <h4 className="text-sm font-semibold text-foreground mb-2">Output Limitations</h4>
+                <ul className="space-y-1.5 text-xs text-muted-foreground list-disc pl-4">
+                  <li>The model <strong>won&apos;t always</strong> follow the exact number of output images requested</li>
+                  <li>Flash 2.5 is limited to a maximum of <strong>10 output images</strong> per prompt</li>
+                  <li>Flash 3.1 and Pro 3 are limited by the <strong>32,768 output token</strong> limit</li>
+                  <li>All generated images include a <strong>SynthID watermark</strong> (cannot be disabled)</li>
+                </ul>
+              </div>
+
+              <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
+                <h4 className="text-sm font-semibold text-foreground mb-2">Feature Limitations</h4>
+                <ul className="space-y-1.5 text-xs text-muted-foreground list-disc pl-4">
+                  <li>Search grounding with image search (Flash 3.1) does <strong>not support using
+                    real-world images of people</strong> from web search</li>
+                  <li><strong>Function calling</strong>, <strong>code execution</strong>, and <strong>context
+                    caching</strong> are not supported by any image generation model</li>
+                  <li>When using search grounding, image-based search results are <strong>not passed to the
+                    generation model</strong> in standard web search mode</li>
+                  <li>Text rendering works best when text is <strong>short and clearly specified</strong> in quotes</li>
+                </ul>
+              </div>
+
+              <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
+                <h4 className="text-sm font-semibold text-foreground mb-2">Image Search Display Requirements</h4>
+                <p className="text-xs text-muted-foreground mb-2">
+                  When using Image Search within Grounding with Google Search, you must comply with:
+                </p>
+                <ul className="space-y-1.5 text-xs text-muted-foreground list-disc pl-4">
+                  <li><strong>Source attribution</strong> &mdash; Provide a link to the webpage containing the source image
+                    (the containing page, not the image file itself)</li>
+                  <li><strong>Direct navigation</strong> &mdash; If displaying source images, provide a direct, single-click
+                    path from the source image to its containing webpage. Multi-click paths or intermediate viewers
+                    are not permitted.</li>
                 </ul>
               </div>
             </div>
