@@ -1111,35 +1111,119 @@ grounding.searchEntryPoint?.renderedContent`} />
               </table>
             </div>
 
-            <h3 className="text-lg font-medium text-foreground mt-8 mb-3">Output Token Costs</h3>
+            <h3 className="text-lg font-medium text-foreground mt-8 mb-3">Pixel Dimensions (Flash 2.5)</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Flash 2.5 uses different pixel dimensions (1K only, 1,290 tokens per image):
+            </p>
+            <div className="my-4 overflow-x-auto">
+              <table className="w-full text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-border bg-muted/50">
+                    <th className="px-3 py-2 text-left font-medium">Ratio</th>
+                    <th className="px-3 py-2 text-center font-medium">Dimensions</th>
+                    <th className="px-3 py-2 text-center font-medium">Tokens</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    ['1:1', '1024x1024'],
+                    ['2:3', '832x1248'],
+                    ['3:2', '1248x832'],
+                    ['3:4', '864x1184'],
+                    ['4:3', '1184x864'],
+                    ['4:5', '896x1152'],
+                    ['5:4', '1152x896'],
+                    ['9:16', '768x1344'],
+                    ['16:9', '1344x768'],
+                    ['21:9', '1536x672'],
+                  ].map(([ratio, dims], i) => (
+                    <tr key={i} className="border-b border-border last:border-0">
+                      <td className="px-3 py-1.5 font-medium">{ratio}</td>
+                      <td className="px-3 py-1.5 text-center text-muted-foreground">{dims}</td>
+                      <td className="px-3 py-1.5 text-center text-muted-foreground">1,290</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <h3 className="text-lg font-medium text-foreground mt-8 mb-3">Output Tokens Per Image</h3>
             <div className="my-4 overflow-x-auto">
               <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="border-b border-border bg-muted/50">
                     <th className="px-4 py-3 text-left font-medium">Resolution</th>
-                    <th className="px-4 py-3 text-center font-medium">Output Tokens</th>
+                    <th className="px-4 py-3 text-center font-medium">Flash 3.1</th>
+                    <th className="px-4 py-3 text-center font-medium">Pro 3</th>
+                    <th className="px-4 py-3 text-center font-medium">Flash 2.5</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr className="border-b border-border">
                     <td className="px-4 py-2.5 font-medium">512</td>
-                    <td className="px-4 py-2.5 text-center text-muted-foreground">747 tokens per image</td>
+                    <td className="px-4 py-2.5 text-center text-muted-foreground">747</td>
+                    <td className="px-4 py-2.5 text-center text-muted-foreground">-</td>
+                    <td className="px-4 py-2.5 text-center text-muted-foreground">-</td>
                   </tr>
                   <tr className="border-b border-border">
                     <td className="px-4 py-2.5 font-medium">1K</td>
-                    <td className="px-4 py-2.5 text-center text-muted-foreground">1,120 tokens per image</td>
+                    <td className="px-4 py-2.5 text-center text-muted-foreground">1,120</td>
+                    <td className="px-4 py-2.5 text-center text-muted-foreground">1,120</td>
+                    <td className="px-4 py-2.5 text-center text-muted-foreground">1,290</td>
                   </tr>
                   <tr className="border-b border-border">
                     <td className="px-4 py-2.5 font-medium">2K</td>
-                    <td className="px-4 py-2.5 text-center text-muted-foreground">1,120 tokens per image</td>
+                    <td className="px-4 py-2.5 text-center text-muted-foreground">1,120</td>
+                    <td className="px-4 py-2.5 text-center text-muted-foreground">1,120</td>
+                    <td className="px-4 py-2.5 text-center text-muted-foreground">-</td>
                   </tr>
                   <tr className="border-b border-border">
                     <td className="px-4 py-2.5 font-medium">4K</td>
-                    <td className="px-4 py-2.5 text-center text-muted-foreground">2,000 tokens per image</td>
+                    <td className="px-4 py-2.5 text-center text-muted-foreground">2,000</td>
+                    <td className="px-4 py-2.5 text-center text-muted-foreground">2,000</td>
+                    <td className="px-4 py-2.5 text-center text-muted-foreground">-</td>
                   </tr>
                 </tbody>
               </table>
             </div>
+
+            <h3 className="text-lg font-medium text-foreground mt-8 mb-3">Pricing (per 1M tokens)</h3>
+            <div className="my-4 overflow-x-auto">
+              <table className="w-full text-sm border-collapse">
+                <thead>
+                  <tr className="border-b border-border bg-muted/50">
+                    <th className="px-4 py-3 text-left font-medium">Type</th>
+                    <th className="px-4 py-3 text-center font-medium">Flash 3.1</th>
+                    <th className="px-4 py-3 text-center font-medium">Pro 3</th>
+                    <th className="px-4 py-3 text-center font-medium">Flash 2.5</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-border">
+                    <td className="px-4 py-2.5 font-medium">Input (text, image)</td>
+                    <td className="px-4 py-2.5 text-center">$0.50</td>
+                    <td className="px-4 py-2.5 text-center">$2.00</td>
+                    <td className="px-4 py-2.5 text-center">$0.30</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="px-4 py-2.5 font-medium">Text output</td>
+                    <td className="px-4 py-2.5 text-center">$3.00</td>
+                    <td className="px-4 py-2.5 text-center">$12.00</td>
+                    <td className="px-4 py-2.5 text-center">$2.50</td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="px-4 py-2.5 font-medium">Image output</td>
+                    <td className="px-4 py-2.5 text-center">$60.00</td>
+                    <td className="px-4 py-2.5 text-center">$120.00</td>
+                    <td className="px-4 py-2.5 text-center">$30.00</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Search grounding: 5,000 free queries/month, then $14 per 1,000 queries. Input tokens from search are not charged.
+              Use the <a href="/pricing" className="text-gcp-blue underline">Pricing Calculator</a> for detailed cost estimates.
+            </p>
           </section>
 
           {/* ============================================================== */}

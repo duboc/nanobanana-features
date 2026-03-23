@@ -15,6 +15,7 @@ import {
   X,
   Cloud,
   BookOpen,
+  Calculator,
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -26,6 +27,7 @@ const NAV_ITEMS = [
   { href: '/reference-images', label: 'Reference Images', icon: Images },
   { href: '/search-grounding', label: 'Search Grounding', icon: Search },
   { href: '/style-gallery', label: 'Style Gallery', icon: Palette },
+  { href: '/pricing', label: 'Pricing Calculator', icon: Calculator },
   { href: '/docs', label: 'Documentation', icon: BookOpen },
 ]
 
