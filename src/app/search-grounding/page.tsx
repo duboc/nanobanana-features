@@ -48,13 +48,13 @@ export default function SearchGroundingPage() {
     >
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="lg:col-span-1 space-y-6">
-          <div className="rounded-xl border border-border bg-card p-6 space-y-6">
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          <div className="rounded-lg border border-border bg-card p-5 shadow-sm space-y-5">
+            <h3 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Configuration
             </h3>
             <ModelSelector value={model} onChange={setModel} />
             {!supportsSearch && (
-              <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/10 p-3 text-xs text-yellow-500">
+              <div className="rounded-lg border border-gcp-yellow/30 bg-gcp-yellow/10 p-3 text-xs text-gcp-yellow">
                 This model does not support Search Grounding. Use Nano Banana 2 or Pro.
               </div>
             )}
@@ -63,7 +63,7 @@ export default function SearchGroundingPage() {
 
             {supportsImageSearch && (
               <div className="space-y-2">
-                <label className="text-sm font-medium">Image Search</label>
+                <label className="text-[13px] font-medium text-foreground">Image Search</label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
@@ -80,15 +80,15 @@ export default function SearchGroundingPage() {
           </div>
 
           {/* Example prompts */}
-          <div className="rounded-xl border border-border bg-card p-6 space-y-3">
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          <div className="rounded-lg border border-border bg-card p-5 shadow-sm space-y-3">
+            <h3 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Try These
             </h3>
             {EXAMPLE_PROMPTS.map((p, i) => (
               <button
                 key={i}
                 onClick={() => setPrompt(p)}
-                className="block w-full rounded-lg border border-border p-3 text-left text-xs text-muted-foreground hover:border-primary/30 hover:text-foreground transition-all"
+                className="block w-full rounded-lg border border-border p-3 text-left text-xs text-muted-foreground hover:border-gcp-blue/30 hover:text-foreground transition-all"
               >
                 {p}
               </button>
@@ -115,9 +115,9 @@ export default function SearchGroundingPage() {
 
           {/* Grounding sources */}
           {groundingMetadata?.groundingChunks && groundingMetadata.groundingChunks.length > 0 && (
-            <div className="rounded-xl border border-border bg-card p-6 space-y-3">
+            <div className="rounded-lg border border-border bg-card p-5 shadow-sm space-y-3">
               <div className="flex items-center gap-2">
-                <Search className="h-4 w-4 text-muted-foreground" />
+                <Search className="h-4 w-4 text-gcp-blue" />
                 <h3 className="text-sm font-semibold">Sources</h3>
               </div>
               <div className="space-y-2">
@@ -128,7 +128,7 @@ export default function SearchGroundingPage() {
                         href={chunk.web.uri}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2 rounded-lg border border-border p-3 text-sm hover:border-primary/30 transition-all"
+                        className="flex items-center gap-2 rounded-lg border border-border p-3 text-sm hover:border-gcp-blue/30 transition-all"
                       >
                         <ExternalLink className="h-3 w-3 shrink-0 text-muted-foreground" />
                         <span className="truncate">{chunk.web.title || chunk.web.uri}</span>

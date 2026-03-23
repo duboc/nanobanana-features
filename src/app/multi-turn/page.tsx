@@ -50,9 +50,9 @@ export default function MultiTurnPage() {
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
         {/* Sidebar config */}
         <div className="space-y-6 lg:col-span-1">
-          <div className="rounded-xl border border-border bg-card p-6 space-y-6">
+          <div className="rounded-lg border border-border bg-card p-5 shadow-sm space-y-5">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+              <h3 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                 Settings
               </h3>
               {messages.length > 0 && (
@@ -73,7 +73,7 @@ export default function MultiTurnPage() {
         </div>
 
         {/* Chat area */}
-        <div className="flex flex-col lg:col-span-3 min-h-[600px] rounded-xl border border-border bg-card/30">
+        <div className="flex flex-col lg:col-span-3 min-h-[600px] rounded-lg border border-border bg-card/30 shadow-sm">
           <ChatHistory messages={messages} isLoading={isLoading} />
 
           {error && (

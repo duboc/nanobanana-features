@@ -21,17 +21,17 @@ export function ResolutionPicker({ value, onChange, modelId }: ResolutionPickerP
   const resolutions = getResolutions(modelId)
 
   return (
-    <div className="space-y-2">
-      <label className="text-sm font-medium">Resolution</label>
-      <div className="inline-flex rounded-lg border border-border p-1">
+    <div className="space-y-1.5">
+      <label className="text-[13px] font-medium text-foreground">Resolution</label>
+      <div className="inline-flex rounded-full border border-border bg-muted/50 p-0.5">
         {resolutions.map(res => (
           <button
             key={res}
             onClick={() => onChange(res)}
             className={cn(
-              'rounded-md px-4 py-1.5 text-sm font-medium transition-all',
+              'rounded-full px-4 py-1 text-[13px] font-medium transition-all',
               value === res
-                ? 'bg-primary text-primary-foreground shadow-sm'
+                ? 'bg-white text-foreground shadow-sm'
                 : 'text-muted-foreground hover:text-foreground'
             )}
           >

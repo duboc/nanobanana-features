@@ -32,11 +32,11 @@ export function AspectRatioPicker({ value, onChange, modelId }: AspectRatioPicke
 
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium">Aspect Ratio</label>
-      <div className="flex flex-wrap gap-2">
+      <label className="text-[13px] font-medium text-foreground">Aspect Ratio</label>
+      <div className="flex flex-wrap gap-1.5">
         {ratios.map(ratio => {
           const dims = RATIO_DIMENSIONS[ratio]
-          const maxDim = 20
+          const maxDim = 18
           const scale = maxDim / Math.max(dims.w, dims.h)
           const w = Math.max(dims.w * scale, 4)
           const h = Math.max(dims.h * scale, 4)
@@ -46,16 +46,16 @@ export function AspectRatioPicker({ value, onChange, modelId }: AspectRatioPicke
               key={ratio}
               onClick={() => onChange(ratio)}
               className={cn(
-                'flex flex-col items-center gap-1 rounded-lg border px-3 py-2 transition-all',
+                'flex flex-col items-center gap-0.5 rounded-md border px-2.5 py-1.5 transition-all',
                 value === ratio
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-border hover:border-muted-foreground/30'
+                  ? 'border-gcp-blue bg-gcp-blue/8 text-gcp-blue'
+                  : 'border-border hover:border-muted-foreground/40 hover:bg-muted/50'
               )}
             >
               <div
                 className={cn(
-                  'rounded-sm',
-                  value === ratio ? 'bg-primary' : 'bg-muted-foreground/30'
+                  'rounded-[2px]',
+                  value === ratio ? 'bg-gcp-blue' : 'bg-muted-foreground/25'
                 )}
                 style={{ width: `${w}px`, height: `${h}px` }}
               />

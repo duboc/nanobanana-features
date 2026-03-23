@@ -49,7 +49,7 @@ export function PromptInput({
           size="icon"
           onClick={onSubmit}
           disabled={isLoading || !value.trim()}
-          className="h-8 w-8"
+          className="h-8 w-8 rounded-full bg-gcp-blue text-white hover:bg-gcp-blue/90"
         >
           {isLoading ? (
             <Loader2 className="h-4 w-4 animate-spin" />

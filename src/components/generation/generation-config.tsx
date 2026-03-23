@@ -36,27 +36,26 @@ export function GenerationConfig({
   const hasThinking = modelConfig.thinkingLevels.length > 0
 
   return (
-    <div className="space-y-6 rounded-xl border border-border bg-card p-6">
-      <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+    <div className="space-y-5 rounded-lg border border-border bg-card p-5 shadow-sm">
+      <h3 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
         Configuration
       </h3>
       <ModelSelector value={model} onChange={onModelChange} />
       <AspectRatioPicker value={aspectRatio} onChange={onAspectRatioChange} modelId={model} />
       <ResolutionPicker value={resolution} onChange={onResolutionChange} modelId={model} />
 
-      {/* Thinking Level (only for models that support it) */}
       {hasThinking && onThinkingLevelChange && (
         <div className="space-y-2">
-          <label className="text-sm font-medium">Thinking Level</label>
-          <div className="inline-flex rounded-lg border border-border p-1">
+          <label className="text-[13px] font-medium text-foreground">Thinking Level</label>
+          <div className="inline-flex rounded-full border border-border bg-muted/50 p-0.5">
             {modelConfig.thinkingLevels.map(level => (
               <button
                 key={level}
                 onClick={() => onThinkingLevelChange(level)}
                 className={cn(
-                  'rounded-md px-4 py-1.5 text-sm font-medium capitalize transition-all',
+                  'rounded-full px-4 py-1 text-[13px] font-medium capitalize transition-all',
                   thinkingLevel === level
-                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    ? 'bg-white text-foreground shadow-sm'
                     : 'text-muted-foreground hover:text-foreground'
                 )}
               >
@@ -64,23 +63,22 @@ export function GenerationConfig({
               </button>
             ))}
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-[11px] text-muted-foreground">
             Higher thinking improves quality but increases latency
           </p>
         </div>
       )}
 
-      {/* Output Mode */}
       {onImageOnlyChange !== undefined && (
         <div className="space-y-2">
-          <label className="text-sm font-medium">Output Mode</label>
-          <div className="inline-flex rounded-lg border border-border p-1">
+          <label className="text-[13px] font-medium text-foreground">Output Mode</label>
+          <div className="inline-flex rounded-full border border-border bg-muted/50 p-0.5">
             <button
               onClick={() => onImageOnlyChange(false)}
               className={cn(
-                'rounded-md px-4 py-1.5 text-sm font-medium transition-all',
+                'rounded-full px-4 py-1 text-[13px] font-medium transition-all',
                 !imageOnly
-                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  ? 'bg-white text-foreground shadow-sm'
                   : 'text-muted-foreground hover:text-foreground'
               )}
             >
@@ -89,9 +87,9 @@ export function GenerationConfig({
             <button
               onClick={() => onImageOnlyChange(true)}
               className={cn(
-                'rounded-md px-4 py-1.5 text-sm font-medium transition-all',
+                'rounded-full px-4 py-1 text-[13px] font-medium transition-all',
                 imageOnly
-                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  ? 'bg-white text-foreground shadow-sm'
                   : 'text-muted-foreground hover:text-foreground'
               )}
             >

@@ -20,10 +20,10 @@ export function ModelSelector({ value, onChange }: ModelSelectorProps) {
   const modelIds = getModelIds()
 
   return (
-    <div className="space-y-2">
-      <label className="text-sm font-medium">Model</label>
+    <div className="space-y-1.5">
+      <label className="text-[13px] font-medium text-foreground">Model</label>
       <Select value={value} onValueChange={v => onChange(v as ModelId)}>
-        <SelectTrigger className="w-full">
+        <SelectTrigger className="w-full rounded-md">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -32,9 +32,9 @@ export function ModelSelector({ value, onChange }: ModelSelectorProps) {
             return (
               <SelectItem key={id} value={id}>
                 <div className="flex items-center gap-2">
-                  <span className="font-medium">{model.name}</span>
+                  <span className="font-medium text-[13px]">{model.name}</span>
                   {model.supportsSearchGrounding && (
-                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0 rounded-full">
                       Search
                     </Badge>
                   )}
@@ -44,7 +44,7 @@ export function ModelSelector({ value, onChange }: ModelSelectorProps) {
           })}
         </SelectContent>
       </Select>
-      <p className="text-xs text-muted-foreground">{MODELS[value].description}</p>
+      <p className="text-[11px] text-muted-foreground leading-relaxed">{MODELS[value].description}</p>
     </div>
   )
 }

@@ -38,9 +38,9 @@ export function ChatHistory({ messages, isLoading }: ChatHistoryProps) {
           <div className="flex justify-start">
             <div className="rounded-2xl rounded-bl-md border border-border bg-card px-4 py-3">
               <div className="flex items-center gap-2">
-                <div className="h-2 w-2 animate-bounce rounded-full bg-primary [animation-delay:0ms]" />
-                <div className="h-2 w-2 animate-bounce rounded-full bg-primary [animation-delay:150ms]" />
-                <div className="h-2 w-2 animate-bounce rounded-full bg-primary [animation-delay:300ms]" />
+                <div className="h-2 w-2 animate-bounce rounded-full bg-gcp-blue [animation-delay:0ms]" />
+                <div className="h-2 w-2 animate-bounce rounded-full bg-gcp-blue [animation-delay:150ms]" />
+                <div className="h-2 w-2 animate-bounce rounded-full bg-gcp-blue [animation-delay:300ms]" />
               </div>
             </div>
           </div>

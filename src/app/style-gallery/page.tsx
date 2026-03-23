@@ -96,8 +96,8 @@ export default function StyleGalleryPage() {
                   className={cn(
                     'flex flex-col items-center gap-2 rounded-xl border p-4 text-center transition-all',
                     isSelected
-                      ? 'border-primary bg-primary/10 text-primary'
-                      : 'border-border hover:border-muted-foreground/30'
+                      ? 'border-gcp-blue bg-gcp-blue/10 text-gcp-blue'
+                      : 'border-border hover:border-gcp-blue/20'
                   )}
                 >
                   <Icon className="h-6 w-6" />
@@ -109,7 +109,7 @@ export default function StyleGalleryPage() {
 
           {/* Selected template details */}
           {selectedTemplate && (
-            <Card className="border-primary/20 bg-primary/5">
+            <Card className="border-gcp-blue/20 bg-gcp-blue/5">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-base">{selectedTemplate.name}</CardTitle>

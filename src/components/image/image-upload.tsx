@@ -102,7 +102,7 @@ export function ImageUpload({
       className={cn(
         'cursor-pointer rounded-xl border-2 border-dashed p-8 text-center transition-all',
         isDragging
-          ? 'border-primary bg-primary/5'
+          ? 'border-gcp-blue bg-gcp-blue/5'
           : 'border-border hover:border-muted-foreground/30'
       )}
     >
@@ -116,7 +116,7 @@ export function ImageUpload({
       />
       <div className="flex flex-col items-center gap-3">
         {isDragging ? (
-          <Upload className="h-8 w-8 text-primary" />
+          <Upload className="h-8 w-8 text-gcp-blue" />
         ) : (
           <ImageIcon className="h-8 w-8 text-muted-foreground" />
         )}

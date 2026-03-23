@@ -22,9 +22,9 @@ export function ImageGallery({ images, isLoading, text }: ImageGalleryProps) {
           <Skeleton className="aspect-square rounded-xl" />
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-2 w-2 animate-bounce rounded-full bg-primary [animation-delay:0ms]" />
-          <div className="h-2 w-2 animate-bounce rounded-full bg-primary [animation-delay:150ms]" />
-          <div className="h-2 w-2 animate-bounce rounded-full bg-primary [animation-delay:300ms]" />
+          <div className="h-2 w-2 animate-bounce rounded-full bg-gcp-blue [animation-delay:0ms]" />
+          <div className="h-2 w-2 animate-bounce rounded-full bg-gcp-blue [animation-delay:150ms]" />
+          <div className="h-2 w-2 animate-bounce rounded-full bg-gcp-blue [animation-delay:300ms]" />
           <span className="text-sm text-muted-foreground ml-2">Generating...</span>
         </div>
       </div>

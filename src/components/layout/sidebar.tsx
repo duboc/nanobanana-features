@@ -13,11 +13,12 @@ import {
   Home,
   Menu,
   X,
+  Cloud,
 } from 'lucide-react'
 import { useState } from 'react'
 
 const NAV_ITEMS = [
-  { href: '/', label: 'Home', icon: Home },
+  { href: '/', label: 'Overview', icon: Home },
   { href: '/text-to-image', label: 'Text to Image', icon: ImageIcon },
   { href: '/image-editing', label: 'Image Editing', icon: Wand2 },
   { href: '/multi-turn', label: 'Multi-turn Chat', icon: MessageSquare },
@@ -32,18 +33,37 @@ export function Sidebar() {
 
   return (
     <>
-      {/* Mobile toggle */}
-      <button
-        onClick={() => setMobileOpen(!mobileOpen)}
-        className="fixed top-4 left-4 z-50 rounded-lg bg-card p-2 shadow-lg md:hidden"
-      >
-        {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-      </button>
+      {/* Top Header Bar - Google Cloud style */}
+      <header className="fixed top-0 left-0 right-0 z-50 flex h-14 items-center border-b border-border bg-white shadow-sm">
+        <div className="flex items-center gap-2 px-4">
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="rounded-full p-2 hover:bg-muted md:hidden"
+          >
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+          <Link href="/" className="flex items-center gap-2.5">
+            <Cloud className="h-6 w-6 text-gcp-blue" />
+            <span className="text-base font-medium text-foreground">
+              Nano Banana
+            </span>
+            <span className="hidden sm:inline-block rounded bg-gcp-blue/10 px-2 py-0.5 text-[11px] font-medium text-gcp-blue">
+              Image Generation
+            </span>
+          </Link>
+        </div>
+        <div className="ml-auto flex items-center gap-3 px-4">
+          <div className="hidden md:flex items-center gap-1.5 text-xs text-muted-foreground">
+            <div className="h-2 w-2 rounded-full bg-gcp-green" />
+            ADC Connected
+          </div>
+        </div>
+      </header>
 
       {/* Backdrop */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          className="fixed inset-0 z-40 bg-black/30 md:hidden"
           onClick={() => setMobileOpen(false)}
         />
       )}
@@ -51,23 +71,12 @@ export function Sidebar() {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-border bg-sidebar transition-transform duration-300 md:translate-x-0',
+          'fixed inset-y-0 left-0 z-40 mt-14 flex w-60 flex-col border-r border-border bg-sidebar transition-transform duration-200 md:translate-x-0',
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
-        {/* Logo */}
-        <div className="flex h-16 items-center gap-3 border-b border-border px-6">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-yellow-400 to-yellow-600">
-            <span className="text-lg">🍌</span>
-          </div>
-          <div>
-            <h1 className="text-sm font-bold tracking-tight">Nano Banana</h1>
-            <p className="text-[10px] text-muted-foreground">Image Generation Explorer</p>
-          </div>
-        </div>
-
         {/* Navigation */}
-        <nav className="flex-1 space-y-1 overflow-y-auto p-3">
+        <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-3">
           {NAV_ITEMS.map(item => {
             const isActive = pathname === item.href
             return (
@@ -76,13 +85,13 @@ export function Sidebar() {
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all',
+                  'flex items-center gap-3 rounded-full px-4 py-2 text-[13px] font-medium transition-colors',
                   isActive
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                    ? 'bg-gcp-blue/10 text-gcp-blue'
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                 )}
               >
-                <item.icon className={cn('h-4 w-4', isActive && 'text-primary')} />
+                <item.icon className={cn('h-[18px] w-[18px]', isActive && 'text-gcp-blue')} />
                 {item.label}
               </Link>
             )
@@ -90,12 +99,12 @@ export function Sidebar() {
         </nav>
 
         {/* Footer */}
-        <div className="border-t border-border p-4">
-          <p className="text-[10px] text-muted-foreground">
+        <div className="border-t border-border px-4 py-3">
+          <p className="text-[11px] text-muted-foreground">
             Powered by Gemini API
           </p>
-          <p className="text-[10px] text-muted-foreground">
-            Using GCP Application Default Credentials
+          <p className="text-[11px] text-muted-foreground">
+            GCP Application Default Credentials
           </p>
         </div>
       </aside>
