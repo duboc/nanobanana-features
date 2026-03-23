@@ -221,7 +221,14 @@ export default function PricingPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <label className="text-[13px] font-medium text-foreground">Images per request</label>
-                <span className="text-[13px] font-mono text-muted-foreground">{numImages}</span>
+                <input
+                  type="number"
+                  min={1}
+                  max={10}
+                  value={numImages}
+                  onChange={e => setNumImages(Math.min(10, Math.max(1, Number(e.target.value) || 1)))}
+                  className="w-16 rounded border border-border bg-muted/50 px-2 py-0.5 text-right text-[13px] font-mono text-foreground"
+                />
               </div>
               <input
                 type="range"
@@ -239,7 +246,15 @@ export default function PricingPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <label className="text-[13px] font-medium text-foreground">Input tokens (prompt)</label>
-                <span className="text-[13px] font-mono text-muted-foreground">{formatNumber(inputTokens)}</span>
+                <input
+                  type="number"
+                  min={50}
+                  max={10000}
+                  step={50}
+                  value={inputTokens}
+                  onChange={e => setInputTokens(Math.min(10000, Math.max(0, Number(e.target.value) || 0)))}
+                  className="w-24 rounded border border-border bg-muted/50 px-2 py-0.5 text-right text-[13px] font-mono text-foreground"
+                />
               </div>
               <input
                 type="range"
@@ -258,7 +273,15 @@ export default function PricingPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <label className="text-[13px] font-medium text-foreground">Text output tokens</label>
-                <span className="text-[13px] font-mono text-muted-foreground">{formatNumber(textOutputTokens)}</span>
+                <input
+                  type="number"
+                  min={0}
+                  max={2000}
+                  step={50}
+                  value={textOutputTokens}
+                  onChange={e => setTextOutputTokens(Math.min(2000, Math.max(0, Number(e.target.value) || 0)))}
+                  className="w-24 rounded border border-border bg-muted/50 px-2 py-0.5 text-right text-[13px] font-mono text-foreground"
+                />
               </div>
               <input
                 type="range"
@@ -293,7 +316,14 @@ export default function PricingPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <label className="text-[13px] font-medium text-foreground">Queries per request</label>
-                  <span className="text-[13px] font-mono text-muted-foreground">{searchQueries}</span>
+                  <input
+                    type="number"
+                    min={1}
+                    max={5}
+                    value={searchQueries}
+                    onChange={e => setSearchQueries(Math.min(5, Math.max(1, Number(e.target.value) || 1)))}
+                    className="w-16 rounded border border-border bg-muted/50 px-2 py-0.5 text-right text-[13px] font-mono text-foreground"
+                  />
                 </div>
                 <input
                   type="range"
@@ -318,7 +348,14 @@ export default function PricingPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <label className="text-[13px] font-medium text-foreground">Requests per month</label>
-                <span className="text-[13px] font-mono text-muted-foreground">{formatNumber(monthlyVolume)}</span>
+                <input
+                  type="number"
+                  min={1}
+                  max={100000}
+                  value={monthlyVolume}
+                  onChange={e => setMonthlyVolume(Math.min(100000, Math.max(1, Number(e.target.value) || 1)))}
+                  className="w-24 rounded border border-border bg-muted/50 px-2 py-0.5 text-right text-[13px] font-mono text-foreground"
+                />
               </div>
               <input
                 type="range"
