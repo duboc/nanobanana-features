@@ -16,6 +16,7 @@ import {
   Cloud,
   BookOpen,
   Calculator,
+  Terminal,
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -28,6 +29,7 @@ const NAV_ITEMS = [
   { href: '/search-grounding', label: 'Search Grounding', icon: Search },
   { href: '/style-gallery', label: 'Style Gallery', icon: Palette },
   { href: '/pricing', label: 'Pricing Calculator', icon: Calculator },
+  { href: '/api-examples', label: 'API Examples', icon: Terminal },
   { href: '/docs', label: 'Documentation', icon: BookOpen },
 ]
 

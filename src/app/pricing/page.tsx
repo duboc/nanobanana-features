@@ -248,25 +248,24 @@ export default function PricingPage() {
                 <label className="text-[13px] font-medium text-foreground">Input tokens (prompt)</label>
                 <input
                   type="number"
-                  min={50}
-                  max={10000}
+                  min={0}
                   step={50}
                   value={inputTokens}
-                  onChange={e => setInputTokens(Math.min(10000, Math.max(0, Number(e.target.value) || 0)))}
-                  className="w-24 rounded border border-border bg-muted/50 px-2 py-0.5 text-right text-[13px] font-mono text-foreground"
+                  onChange={e => setInputTokens(Math.max(0, Number(e.target.value) || 0))}
+                  className="w-28 rounded border border-border bg-muted/50 px-2 py-0.5 text-right text-[13px] font-mono text-foreground"
                 />
               </div>
               <input
                 type="range"
                 min={50}
-                max={10000}
+                max={100000}
                 step={50}
-                value={inputTokens}
+                value={Math.min(inputTokens, 100000)}
                 onChange={e => setInputTokens(Number(e.target.value))}
                 className="w-full accent-[#4285f4]"
               />
               <div className="flex justify-between text-[10px] text-muted-foreground">
-                <span>50</span><span>10,000</span>
+                <span>50</span><span>100,000</span>
               </div>
             </div>
 
@@ -276,24 +275,23 @@ export default function PricingPage() {
                 <input
                   type="number"
                   min={0}
-                  max={2000}
                   step={50}
                   value={textOutputTokens}
-                  onChange={e => setTextOutputTokens(Math.min(2000, Math.max(0, Number(e.target.value) || 0)))}
-                  className="w-24 rounded border border-border bg-muted/50 px-2 py-0.5 text-right text-[13px] font-mono text-foreground"
+                  onChange={e => setTextOutputTokens(Math.max(0, Number(e.target.value) || 0))}
+                  className="w-28 rounded border border-border bg-muted/50 px-2 py-0.5 text-right text-[13px] font-mono text-foreground"
                 />
               </div>
               <input
                 type="range"
                 min={0}
-                max={2000}
+                max={50000}
                 step={50}
-                value={textOutputTokens}
+                value={Math.min(textOutputTokens, 50000)}
                 onChange={e => setTextOutputTokens(Number(e.target.value))}
                 className="w-full accent-[#4285f4]"
               />
               <div className="flex justify-between text-[10px] text-muted-foreground">
-                <span>0 (image only)</span><span>2,000</span>
+                <span>0 (image only)</span><span>50,000</span>
               </div>
             </div>
           </div>
@@ -351,23 +349,22 @@ export default function PricingPage() {
                 <input
                   type="number"
                   min={1}
-                  max={100000}
                   value={monthlyVolume}
-                  onChange={e => setMonthlyVolume(Math.min(100000, Math.max(1, Number(e.target.value) || 1)))}
-                  className="w-24 rounded border border-border bg-muted/50 px-2 py-0.5 text-right text-[13px] font-mono text-foreground"
+                  onChange={e => setMonthlyVolume(Math.max(1, Number(e.target.value) || 1))}
+                  className="w-32 rounded border border-border bg-muted/50 px-2 py-0.5 text-right text-[13px] font-mono text-foreground"
                 />
               </div>
               <input
                 type="range"
                 min={1}
-                max={100000}
-                step={1}
-                value={monthlyVolume}
+                max={1000000}
+                step={100}
+                value={Math.min(monthlyVolume, 1000000)}
                 onChange={e => setMonthlyVolume(Number(e.target.value))}
                 className="w-full accent-[#4285f4]"
               />
               <div className="flex justify-between text-[10px] text-muted-foreground">
-                <span>1</span><span>100,000</span>
+                <span>1</span><span>1,000,000</span>
               </div>
             </div>
           </div>

@@ -15,10 +15,26 @@
 set -euo pipefail
 
 # ---------------------------------------------------------------------------
+# Load .env file if present (so we pick up GOOGLE_CLOUD_PROJECT, etc.)
+# ---------------------------------------------------------------------------
+if [[ -f .env ]]; then
+  # Export each non-comment, non-empty line as an env var (only if not already set)
+  while IFS='=' read -r key value; do
+    # Skip comments and empty lines
+    [[ -z "$key" || "$key" =~ ^# ]] && continue
+    # Only set if not already in the environment
+    if [[ -z "${!key:-}" ]]; then
+      export "$key=$value"
+    fi
+  done < .env
+fi
+
+# ---------------------------------------------------------------------------
 # Defaults (override with flags or environment variables)
 # ---------------------------------------------------------------------------
 PROJECT="${GOOGLE_CLOUD_PROJECT:-$(gcloud config get-value project 2>/dev/null)}"
-REGION="${GOOGLE_CLOUD_LOCATION:-us-central1}"
+REGION="${CLOUD_RUN_REGION:-us-central1}"
+GEMINI_LOCATION="${GOOGLE_CLOUD_LOCATION:-global}"
 SERVICE_NAME="${CLOUD_RUN_SERVICE:-nanobanana-features}"
 MEMORY="1Gi"
 CPU="1"
@@ -53,6 +69,7 @@ echo "============================================"
 echo ""
 echo "  Project:     ${PROJECT}"
 echo "  Region:      ${REGION}"
+echo "  Gemini loc:  ${GEMINI_LOCATION}"
 echo "  Service:     ${SERVICE_NAME}"
 echo "  Memory:      ${MEMORY}"
 echo "  CPU:         ${CPU}"
@@ -89,8 +106,8 @@ gcloud run deploy "${SERVICE_NAME}" \
   --cpu="${CPU}" \
   --max-instances="${MAX_INSTANCES}" \
   --min-instances="${MIN_INSTANCES}" \
-  --set-env-vars="GOOGLE_CLOUD_PROJECT=${PROJECT},GOOGLE_CLOUD_LOCATION=${REGION}" \
-  --set-build-env-vars="GOOGLE_CLOUD_PROJECT=${PROJECT},GOOGLE_CLOUD_LOCATION=${REGION}" \
+  --set-env-vars="GOOGLE_CLOUD_PROJECT=${PROJECT},GOOGLE_CLOUD_LOCATION=${GEMINI_LOCATION}" \
+  --set-build-env-vars="GOOGLE_CLOUD_PROJECT=${PROJECT},GOOGLE_CLOUD_LOCATION=${GEMINI_LOCATION}" \
   --port=3000 \
   --quiet
 

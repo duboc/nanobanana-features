@@ -23,10 +23,22 @@
 set -euo pipefail
 
 # ---------------------------------------------------------------------------
+# Load .env file if present
+# ---------------------------------------------------------------------------
+if [[ -f .env ]]; then
+  while IFS='=' read -r key value; do
+    [[ -z "$key" || "$key" =~ ^# ]] && continue
+    if [[ -z "${!key:-}" ]]; then
+      export "$key=$value"
+    fi
+  done < .env
+fi
+
+# ---------------------------------------------------------------------------
 # Defaults
 # ---------------------------------------------------------------------------
 PROJECT="${GOOGLE_CLOUD_PROJECT:-$(gcloud config get-value project 2>/dev/null)}"
-REGION="${GOOGLE_CLOUD_LOCATION:-us-central1}"
+REGION="${CLOUD_RUN_REGION:-us-central1}"
 SERVICE_NAME="${CLOUD_RUN_SERVICE:-nanobanana-features}"
 
 # ---------------------------------------------------------------------------
